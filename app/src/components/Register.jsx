@@ -1,8 +1,7 @@
-import React, { useContext, useState } from "react";
-import { UserContext } from "../context/UserContext";
+import React, { useState } from "react";
 import Message from "./Message";
 
-const Register = () => {
+const Register = ({ switchToLogin }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmationPassword, setConfirmationPassword] = useState("");
@@ -10,21 +9,22 @@ const Register = () => {
     const [messageType, setMessageType] = useState("");
 
     const submitRegistration = async () => {
-        const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: email, password: password }),
-        };
-
         try {
-            const response = await fetch("/api/v1/auth/signup", requestOptions);
-            const data = await response.json();
+            const response = await fetch("/api/v1/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
 
+            const data = await response.json();
             if (!response.ok) {
-                setMessage(data.message || "Registration failed. Please try again.");
+                setMessage(data.message || "Registration failed. Try again.");
                 setMessageType("error");
             } else {
-                setMessage(data.message || "Registration successful, Check email to verify your account!!.");
+                setMessage(
+                    data.message ||
+                        "Registration successful. Verify your email!"
+                );
                 setMessageType("success");
             }
         } catch (error) {
@@ -38,62 +38,76 @@ const Register = () => {
         if (password === confirmationPassword && password.length >= 8) {
             submitRegistration();
         } else {
-            setMessage(
-                "Ensure that the passwords match and are greater than or equal to 8 characters."
-            );
+            setMessage("Passwords must match and be at least 8 characters.");
             setMessageType("error");
         }
     };
 
     return (
-        <div className="column">
-            <form className="box" onSubmit={handleSubmit}>
-                <h1 className="title has-text-centered">Register</h1>
-                <div className="field">
-                    <label className="label">Email Address</label>
-                    <div className="control">
-                        <input
-                            type="email"
-                            placeholder="Enter email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="input"
-                            required
-                        />
+        <div className="column is-vcentered is-flex is-justify-content-center">
+            <div className="column is-one-third is-offset-one-third">
+                <form className="box" onSubmit={handleSubmit}>
+                    <h1 className="title has-text-centered">Register</h1>
+                    <div className="field">
+                        <label className="label">Email Address</label>
+                        <div className="control">
+                            <input
+                                type="email"
+                                placeholder="Enter email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="input"
+                                required
+                            />
+                        </div>
                     </div>
-                </div>
-                <div className="field">
-                    <label className="label">Password</label>
-                    <div className="control">
-                        <input
-                            type="password"
-                            placeholder="Enter password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="input"
-                            required
-                        />
+                    <div className="field">
+                        <label className="label">Password</label>
+                        <div className="control">
+                            <input
+                                type="password"
+                                placeholder="Enter password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="input"
+                                required
+                            />
+                        </div>
                     </div>
-                </div>
-                <div className="field">
-                    <label className="label">Confirm Password</label>
-                    <div className="control">
-                        <input
-                            type="password"
-                            placeholder="Enter password"
-                            value={confirmationPassword}
-                            onChange={(e) => setConfirmationPassword(e.target.value)}
-                            className="input"
-                            required
-                        />
+                    <div className="field">
+                        <label className="label">Confirm Password</label>
+                        <div className="control">
+                            <input
+                                type="password"
+                                placeholder="Confirm password"
+                                value={confirmationPassword}
+                                onChange={(e) =>
+                                    setConfirmationPassword(e.target.value)
+                                }
+                                className="input"
+                                required
+                            />
+                        </div>
                     </div>
-                </div>
-                <Message message={message} type={messageType} />
-                <br />
-                <button className="button is-primary" type="submit">
-                    Register
-                </button>
-            </form>
+                    <Message message={message} type={messageType} />
+                    <br />
+                    <button className="button is-primary" type="submit">
+                        Register
+                    </button>
+                    <br />
+                    <br />
+                    <p className="has-text-centered mt-3">
+                        Already have an account?{" "}
+                        <a
+                            onClick={switchToLogin}
+                            className="has-text-link"
+                            style={{ cursor: "pointer" }}
+                        >
+                            Login here
+                        </a>
+                    </p>
+                </form>
+            </div>
         </div>
     );
 };

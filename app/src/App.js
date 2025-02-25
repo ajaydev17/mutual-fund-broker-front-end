@@ -2,29 +2,22 @@ import React, { useContext, useEffect, useState } from "react";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import Header from "./components/Header";
+import Table from "./components/Table";
 import { UserContext } from "./context/UserContext";
 
 const App = () => {
     const [message, setMessage] = useState("");
-    const { token } = useContext(UserContext); // Use destructuring
+    const { token } = useContext(UserContext);
+    const [showLogin, setShowLogin] = useState(false);
 
     const getWelcomeMessage = async () => {
         try {
-            const requestOptions = {
+            const response = await fetch("/api/v1/auth/welcome", {
                 method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            };
+                headers: { "Content-Type": "application/json" },
+            });
 
-            const response = await fetch(
-                "/api/v1/auth/welcome",
-                requestOptions
-            );
-
-            if (!response.ok) {
-                throw new Error("Failed to fetch message");
-            }
+            if (!response.ok) throw new Error("Failed to fetch message");
 
             const data = await response.json();
             setMessage(data.message);
@@ -35,7 +28,7 @@ const App = () => {
 
     useEffect(() => {
         getWelcomeMessage();
-    }, [token]); // Re-fetch when token changes
+    }, [token]);
 
     return (
         <>
@@ -45,10 +38,14 @@ const App = () => {
                 <div className="column m-5 is-two-thirds">
                     {!token ? (
                         <div className="columns">
-                            <Register /> <Login />
+                            {showLogin ? (
+                                <Login switchToRegister={() => setShowLogin(false)} />
+                            ) : (
+                                <Register switchToLogin={() => setShowLogin(true)} />
+                            )}
                         </div>
                     ) : (
-                        <p>Table</p>
+                        <Table />
                     )}
                 </div>
                 <div className="column"></div>
