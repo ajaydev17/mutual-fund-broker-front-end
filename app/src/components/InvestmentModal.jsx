@@ -22,7 +22,7 @@ const InvestmentModal = ({
         const fetchSchemeOptions = async () => {
             try {
                 const response = await fetch(
-                    "/api/v1/investment/get-json-data-file",
+                    "/api/v1/investment/get-json-data-RapidAPI",
                     {
                         method: "GET",
                         headers: {
