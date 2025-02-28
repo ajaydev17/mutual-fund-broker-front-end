@@ -51,16 +51,13 @@ const InvestmentModal = ({
 
             try {
                 const response = await fetch(
-                    "/api/v1/investment/get-an-investment",
+                    `/api/v1/investment/get-an-investment/${scheme_code}`,
                     {
-                        method: "POST",
+                        method: "GET",
                         headers: {
                             "Content-Type": "application/json",
                             Authorization: `Bearer ${token}`,
                         },
-                        body: JSON.stringify({
-                            scheme_code: parseInt(scheme_code, 10),
-                        }),
                     }
                 );
 
