@@ -64,7 +64,7 @@ const Table = () => {
             }),
         };
 
-        const response = await fetch("/api/v1/investment", requestOptions);
+        const response = await fetch(`/api/v1/investment/delete-an-investment/${schemeCode}`, requestOptions);
         if (!response.ok) {
             setMessage("Failed to delete an investment");
             setMessageType("error");
